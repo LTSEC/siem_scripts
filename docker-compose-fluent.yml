@@ -1,0 +1,15 @@
+version: '3.7'
+
+services:
+  # fluent:
+  #   image: fluent/fluent-bit
+  #   volumes:
+  #     - ./fluent-bit-graylog/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
+  #   restart: "on-failure"
+  #   # command: "/fluent-bit/bin/fluent-bit -c /fluent-bit/etc/fluent-bit.conf"
+
+
+networks:
+   default:
+      external:
+         name: graylog_network
