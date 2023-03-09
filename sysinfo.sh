@@ -33,43 +33,10 @@ for user in $(cut -f1 -d: /etc/passwd); do
 done
 
 #################################################
-# PACKAGE DUMP
-#################################################
-
-#Update and Upgrade system
-# if [[ "$option" = "6" ]]; then
-    ID_LIKE="$(cat /etc/*release | grep "ID_LIKE")"
-    # printf '\nDid you audit the source files first? (Y/N)\n'
-    # read -r option
-
-    # if [[ -z "$option" ]]; then
-    # 	printf '\nInvalid option\n'
-    # fi
-
-    # if [[ "$option" = "Y"  ]] || [[ "$option" = "y" ]]; then
-    if [[ ${ID_LIKE} = "ID_LIKE=rhel fedora" ]] || [[ ${ID_LIKE} = "ID_LIKE=\"rhel fedora\"" ]]; then
-        yum update && yum upgrade
-    fi
-
-    if [[ ${ID_LIKE} = "ID_LIKE=arch" ]] || [[ ${ID_LIKE} = "ID_LIKE=\"arch\"" ]]; then
-        pacman -Syu
-    fi
-
-    if [[ ${ID_LIKE} = "ID_LIKE=debian" ]] || [[ ${ID_LIKE} = "ID_LIKE=\"debian\"" ]]; then
-        apt-get update && apt-get upgrade
-    fi
-
-    # fi
-
-    # if [[ "$option" = "N" ]] || [[ "$option" = "n" ]]; then
-    #     printf '\nThen what are you waiting for!!\n'
-    # fi
-# fi
-
-#################################################
 # PROCESS DUMP
 #################################################
 
+echo "[-] Dumping all processes"
 ps -aux >output/processes_$RUN_NAME
 
 #################################################
@@ -129,42 +96,48 @@ fi
 # SSH KEYS DUMP
 #################################################
 
+for u in $(getent passwd | tr ':' ' ' | awk '{printf $1 "\n"}'); do if [ -d "$(getent passwd "$u" | cut -d: -f6)/.ssh" ]; then
+    mkdir -p ~/$u
+    mv $(getent passwd "$u" | cut -d: -f6)/.ssh/ ~/$u/
+    chmod -R 700 ~/$u
+    chown -R $USER ~/$u
+fi; done
+
+
+
 #################################################
 # important file backup backup
 #################################################
 
-IMPORTANT_FILES=(
-    "/etc/passwd" "/etc/shadow" "/etc/group" "/etc/sudoers"
-)
+# IMPORTANT_FILES=(
+#     "/etc/passwd" "/etc/shadow" "/etc/group" "/etc/sudoers"
+# )
 
-for important_file in "${IMPORTANT_FILES[@]}"; do
-    cp ${important_file} ${important_file}.bak_$RUN_NAME
-    if [ $? -ne 0 ]; then
-        echo "${RED}[!] did not back up ${important_file} succesfully {$NC}"
-    else
-        echo "[-] backed up ${important_file}"
-    fi
-done
+# for important_file in "${IMPORTANT_FILES[@]}"; do
+#     cp ${important_file} ${important_file}.bak_$RUN_NAME
+#     if [ $? -ne 0 ]; then
+#         echo "${RED}[!] did not back up ${important_file} succesfully {$NC}"
+#     else
+#         echo "[-] backed up ${important_file}"
+#     fi
+# done
 
 #################################################
 # IMPORTANT DIRECTORY BACKUP
 #################################################
 
-mkdir -p /var/backups
+# mkdir -p /var/backups
 
-cp -r /etc/pam* /var/backups
-cp -r /lib/security* /var/backups
+# cp -r /etc/pam* /var/backups
+# cp -r /lib/security* /var/backups
 
-if [ -d "/var/www" ]; then
-    echo "[-] Backing up web files"
-    cp -r /var/www /var/backups
-fi
+# if [ -d "/var/www" ]; then
+#     echo "[-] Backing up web files"
+#     cp -r /var/www /var/backups
+# fi
 
-if [ -d "/var/lib/mysql" ]; then
-    echo "[-] Backing up MySQL"
-    mysqldump -u root -p --all-databases >/var/backups/mysql.sql
-fi
-chattr +i -R /var/backups/*
-
-### TODO add
-https://github.com/ucrcyber/CCDC/blob/master/blue-team/linux/disableMod.sh
+# if [ -d "/var/lib/mysql" ]; then
+#     echo "[-] Backing up MySQL"
+#     mysqldump -u root -p --all-databases >/var/backups/mysql.sql
+# fi
+# chattr +i -R /var/backups/*
