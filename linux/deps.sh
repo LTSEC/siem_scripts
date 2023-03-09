@@ -19,7 +19,7 @@ elif [ $(command -v apk) ]; then # Alpine
     apk add $packages
 fi
 
-for com in $(echo "addgroup ufw iptables sysctl chattr chmod chown echo grep passwd rm useradd usermod"); do
+for com in $(echo "addgroup ufw iptables sysctl chattr chmod chown echo grep passwd rm useradd ss usermod"); do
     if ! [ $(command -v $com) ]; then
         echo $com not found
     fi
