@@ -1,0 +1,3 @@
+'.platform-linux atom-text-editor':
+  'ctrl-shift-L': 'editor:split-selections-into-lines'
+  'ctrl-l': 'grammar-selector:show'
