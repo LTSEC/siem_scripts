@@ -1,5 +1,5 @@
 # update packages
-packages="sudo nmap tmux tree vim hostname htop clamav lynis"
+packages="sudo nmap tmux tree vim hostname htop clamav lynis wget curl"
 
 printf "this function will be used to install important/essential packages on barebones systems"
 if [ $(command -v apt-get) ]; then # Debian based
